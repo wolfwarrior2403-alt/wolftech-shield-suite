@@ -12,6 +12,8 @@ from sqlmodel import Session, select
 from . import db
 from .compliance import service
 from .compliance.routes import load_firm, router as compliance_router
+from .health import service as health_service
+from .health.routes import router as health_router
 from .models import Firm
 from .seed import reset_demo, seed_demo
 from .web import BASE, render
@@ -42,6 +44,7 @@ def create_app(db_url: str | None = None, seed: bool = True) -> FastAPI:
                   lifespan=lifespan)
     app.mount("/static", StaticFiles(directory=str(BASE / "static")), name="static")
     app.include_router(compliance_router)
+    app.include_router(health_router)
 
     @app.middleware("http")
     async def add_security_headers(request: Request, call_next):
@@ -62,7 +65,7 @@ def create_app(db_url: str | None = None, seed: bool = True) -> FastAPI:
         return render(
             request, "workspace.html", firm=firm,
             dpdp=service.dpdp_assessment(session, firm),
-            health=None,
+            health=health_service.health_assessment(session, firm),
             deadlines=service.deadlines(),
             inventory_done=sum(1 for i in inventory if i.id is not None),
         )

@@ -10,7 +10,7 @@ from .rules.base import DISCLAIMER
 
 BASE = Path(__file__).parent
 templates = Jinja2Templates(directory=str(BASE / "templates"))
-templates.env.globals["health_enabled"] = False
+templates.env.globals["health_enabled"] = True
 
 
 def render(request: Request, name: str, status_code: int = 200, **context):

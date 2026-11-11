@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% set tab = 'health' %}
+{% block title %}Cyber Health Check report{% endblock %}
+{% block content %}
+<div class="kicker">Cyber Health Check</div>
+<h1>Your cyber health report</h1>
+<div class="card accent">
+  {% if result.score is not none %}
+  <div class="score"><span class="num">{{ result.score }}</span><span class="of">/ 100 - grade {{ grade(result.score) }} - {{ result.band }}</span></div>
+  <progress value="{{ result.score }}" max="100">{{ result.score }}%</progress>
+  <p class="muted">{{ result.met }} of {{ result.applicable }} checks met.
+    {% if not result.complete %}{{ result.applicable - result.answered }} questions not answered yet (counted as gaps).{% endif %}</p>
+  {% endif %}
+  <p class="small muted">{{ note }} The score and effort labels are Wolftech's estimate.</p>
+  <div class="actions">
+    <a class="btn ghost sm" href="/firms/{{ firm.id }}/health">Change answers</a>
+    <a class="btn sm" href="/firms/{{ firm.id }}/health/report.pdf">Download PDF report</a>
+  </div>
+</div>
+
+<h2 id="domain">Check your own domain</h2>
+<div class="card">
+  <p class="muted">Passive checks only: public DNS records for SPF, DKIM and DMARC, your website's TLS certificate, and its HTTP security headers. No port scanning. No intrusive testing.</p>
+  {% if error %}<div class="error">{{ error }}</div>{% endif %}
+  <form method="post" action="/firms/{{ firm.id }}/health/domain">
+    <div class="field"><label for="domain-input">Your domain <span class="hint">For example yourfirm.in</span></label>
+      <input type="text" id="domain-input" name="domain" value="{{ domain }}" maxlength="253" required></div>
+    <div class="choices">
+      <label><input type="checkbox" name="ownership" value="yes" required> I confirm that I own or control this domain and may check it.</label>
+    </div>
+    <div class="actions"><button class="btn" type="submit">Run passive check</button></div>
+  </form>
+  {% if results %}
+  <h3>Results for {{ check.domain }}</h3>
+  <p class="small muted">Run on {{ check.run_at.strftime('%d %B %Y') }}.</p>
+  {% for r in results %}
+  <div class="gap">
+    <div class="head">
+      <h3>{{ r.check }}</h3>
+      <span class="pill {{ r.status }}">{{ labels.get(r.status, r.status) }}</span>
+    </div>
+    <p>{{ r.summary }}</p>
+    {% if r.detail %}<p class="small muted">{{ r.detail }}</p>{% endif %}
+    <p class="cite">{% if r.rule_id %}<a href="/rules/certin#{{ r.rule_id|replace('.', '-') }}">{{ r.rule_id }}</a> - CERT-In MSME control 2, NES.4 (guidance){% if not r.scored %} - not counted against you{% endif %}{% else %}Good practice - no specific CERT-In rule requires this - not scored{% endif %}</p>
+    {% if r.fix %}<div class="fix"><b>Fix:</b> {{ r.fix }}</div>{% endif %}
+  </div>
+  {% endfor %}
+  {% endif %}
+</div>
+
+<h2>Fixes, easiest first ({{ result.gaps|length }})</h2>
+{% if not result.gaps %}
+<div class="card"><p>No fixes needed from your answers. Keep evidence for each item.</p></div>
+{% else %}
+<div class="card">
+  {% for g in result.gaps %}
+  <div class="gap">
+    <div class="head">
+      <h3>{{ loop.index }}. {{ g.rule.title }}</h3>
+      <span class="pill {{ 'ok' if g.rule.effort == 'Low' else ('warn' if g.rule.effort == 'Medium' else 'fail') }}">{{ g.rule.effort }} effort</span>
+      <span class="pill">{{ g.status }}</span>
+      {% if g.rule.kind == 'law' %}<span class="pill high">Mandatory</span>{% endif %}
+    </div>
+    <p>{{ g.rule.requirement }}</p>
+    {% if g.note %}<p class="small warnline">{{ g.note }}</p>{% endif %}
+    <p class="cite"><a href="/rules/certin#{{ g.rule.anchor }}">{{ g.rule.id }}</a> - {{ g.rule.citation }} -
+      <a href="{{ g.rule.source.url }}" rel="noopener noreferrer">{{ g.rule.source.title }}</a></p>
+    <div class="fix"><b>Fix:</b> {{ g.rule.fix }}<br><span class="muted small">Evidence to keep: {{ g.rule.evidence }}</span></div>
+  </div>
+  {% endfor %}
+</div>
+{% endif %}
+{% endblock %}

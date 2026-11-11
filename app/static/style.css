@@ -120,3 +120,5 @@ th { color: var(--muted); font-size: 12.5px; text-transform: uppercase; letter-s
 .banner { border: 1px solid var(--line); border-left: 3px solid var(--red); border-radius: 8px; padding: 10px 14px; font-size: 14px; color: var(--muted); margin: 0 0 20px; }
 footer { border-top: 1px solid var(--line); padding: 20px 0 40px; color: var(--muted); font-size: 13.5px; }
 footer .warnline { margin-bottom: 6px; }
+.tabs { scrollbar-width: none; }
+.tabs::-webkit-scrollbar { display: none; }

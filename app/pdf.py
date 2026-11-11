@@ -64,10 +64,20 @@ def _decorate(disclaimer: str, product: str):
 def _table(headers: list[str], rows: list[list[str]], width: float) -> Table:
     data = [[_p(h, CELL_H) for h in headers]] + [[_p(c, CELL) for c in row] for row in rows]
     n = len(headers)
+    def longest_word(i: int) -> int:
+        words = str(headers[i]).split() + [w for r in rows if i < len(r) for w in str(r[i]).split()]
+        return max((len(w) for w in words), default=1)
+
     lengths = [max([len(str(headers[i]))] + [len(str(r[i])) for r in rows if i < len(r)]) for i in range(n)]
-    capped = [min(max(l, 6), 60) for l in lengths]
+    capped = [min(max(lengths[i], 6), 60) for i in range(n)]
+    floors = [min(longest_word(i), 22) * 4.9 + 10 for i in range(n)]   # points; keeps short words on one line
     total = sum(capped)
-    col_widths = [width * c / total for c in capped]
+    col_widths = [max(width * capped[i] / total, floors[i]) for i in range(n)]
+    over = sum(col_widths) - width
+    if over > 0:   # take the excess from the columns that have room
+        slack = [col_widths[i] - floors[i] for i in range(n)]
+        total_slack = sum(slack) or 1
+        col_widths = [col_widths[i] - over * slack[i] / total_slack for i in range(n)]
     t = Table(data, colWidths=col_widths, repeatRows=1)
     t.setStyle(TableStyle([
         ("BACKGROUND", (0, 0), (-1, 0), BG),
