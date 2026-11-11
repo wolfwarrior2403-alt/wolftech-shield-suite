@@ -1,0 +1,20 @@
+# Render Blueprint - demo deployment of Wolftech Shield Suite.
+#
+# IMPORTANT: this deployment has no login. Use it for the fictional demo only.
+# Do not enter a real firm's data on a public URL.
+# The free plan has no persistent disk: the SQLite file is recreated (with the
+# demo workspace) every time the service restarts.
+services:
+  - type: web
+    name: wolftech-shield-suite
+    runtime: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /healthz
+    autoDeployTrigger: commit
+    envVars:
+      - key: PYTHON_VERSION
+        value: "3.14.3"
+      - key: WOLFTECH_DB
+        value: /tmp/wolftech.db
