@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block title %}Workspaces{% endblock %}
+{% block content %}
+<div class="kicker">Security-first compliance for small Indian firms</div>
+<h1>Get ready for the DPDP Act. Know your cyber health.</h1>
+<p class="lead">Answer plain-English questions. See your gaps, each linked to the exact rule. Download draft documents for your lawyer to review.</p>
+
+{% if deadline %}
+<div class="card accent">
+  <div class="kicker">Next legal date</div>
+  <h3>{{ deadline.date.strftime('%d %B %Y') }} - {{ deadline.label }}</h3>
+  <p class="muted">{{ deadline.title }}. {{ deadline.meaning }}</p>
+  <p class="cite">Source: {{ deadline.citation }}</p>
+</div>
+{% endif %}
+
+<h2>Workspaces</h2>
+<div class="grid two">
+  {% for f in firms %}
+  <div class="card">
+    <h3>{{ f.name }} {% if f.is_demo %}<span class="pill">Demo</span>{% endif %}</h3>
+    <p class="muted small">Law firm{% if f.city %}, {{ f.city }}{% endif %}{% if f.staff_count %} - {{ f.staff_count }} people{% endif %}</p>
+    <div class="actions">
+      <a class="btn" href="/firms/{{ f.id }}">Open</a>
+      {% if f.is_demo %}
+      <form method="post" action="/demo/reset"><button class="btn ghost" type="submit">Reset demo</button></form>
+      {% endif %}
+    </div>
+  </div>
+  {% endfor %}
+  <div class="card">
+    <h3>Your firm</h3>
+    <p class="muted small">Start a new workspace. Takes about 15 minutes.</p>
+    <div class="actions"><a class="btn ghost" href="/firms/new">Start a new workspace</a></div>
+  </div>
+</div>
+
+<h2>What is inside</h2>
+<div class="grid two">
+  <div class="card">
+    <h3>Compliance Kit</h3>
+    <p class="muted">Data inventory, gap assessment against the DPDP Act 2023 and DPDP Rules 2025, six draft documents as PDF, and a deadline tracker.</p>
+  </div>
+  {% if health_enabled %}
+  <div class="card">
+    <h3>Cyber Health Check</h3>
+    <p class="muted">A scored security check mapped to CERT-In directions and guidance, with passive checks of your own domain and fixes ranked easiest first.</p>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% set tab = 'deadlines' %}
+{% block title %}Deadlines{% endblock %}
+{% block content %}
+<div class="kicker">Deadline tracker</div>
+<h1>When the law applies</h1>
+<p class="lead">The DPDP Act starts in three phases. The dates below come from the Government's commencement notification.</p>
+<div class="card">
+  <ul class="timeline">
+    {% for d in deadlines %}
+    <li class="{{ d.status }}">
+      <div class="date">{{ d.date.strftime('%d %B %Y') }} <span class="pill {{ 'ok' if d.status == 'past' else 'high' }}">{{ d.label }}</span></div>
+      <h3>{{ d.title }}</h3>
+      <p>{{ d.meaning }}</p>
+      <p class="cite">{{ d.id }} - Provisions: {{ d.provisions }}<br>Source: {{ d.citation }}</p>
+    </li>
+    {% endfor %}
+  </ul>
+  <p class="small muted">{{ note }}</p>
+  <p class="small muted">Sources: Commencement notification G.S.R. 843(E), Gazette of India Extraordinary No. 757, 13 November 2025 (Gazette ID CG-DL-E-14112025-267647), at <a href="https://egazette.gov.in" rel="noopener noreferrer">egazette.gov.in</a>; DPDP Rules 2025, rule 1, at <a href="https://www.meity.gov.in/static/uploads/2025/11/53450e6e5dc0bfa85ebd78686cadad39.pdf" rel="noopener noreferrer">meity.gov.in</a>.</p>
+</div>
+
+<h2>Maximum penalties</h2>
+<div class="card">
+  <div class="tablewrap"><table>
+    <thead><tr><th>Breach</th><th>Maximum</th><th>Source</th></tr></thead>
+    <tbody>{% for what, amount, src in penalties %}<tr><td>{{ what }}</td><td>{{ amount }}</td><td>Act, {{ src }}</td></tr>{% endfor %}</tbody>
+  </table></div>
+  <p class="small muted">The Data Protection Board decides the amount after an inquiry, looking at gravity, duration, the type of data, repetition and what the firm did to reduce harm (Act s.33).</p>
+</div>
+{% endblock %}

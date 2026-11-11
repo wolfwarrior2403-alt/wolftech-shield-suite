@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Shield Suite{% endblock %} - Wolftech AI Labs</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="/"><span class="mark"></span>Wolftech AI Labs <small>Shield Suite</small></a>
+    <nav>
+      <a href="/">Workspaces</a>
+      <a href="/rules/dpdp">DPDP rules</a>
+      {% if health_enabled %}<a href="/rules/certin">CERT-In rules</a>{% endif %}
+    </nav>
+  </div>
+</header>
+<div class="wrap">
+  {% if firm and firm.id %}
+  {% set t = tab|default('') %}
+  <nav class="tabs" aria-label="Workspace">
+    <a href="/firms/{{ firm.id }}" class="{{ 'on' if t == 'overview' }}">{{ firm.name }}</a>
+    <span class="sep"></span>
+    <a href="/firms/{{ firm.id }}/inventory" class="{{ 'on' if t == 'inventory' }}">1. Data inventory</a>
+    <a href="/firms/{{ firm.id }}/assessment" class="{{ 'on' if t == 'assessment' }}">2. Assessment</a>
+    <a href="/firms/{{ firm.id }}/gaps" class="{{ 'on' if t == 'gaps' }}">3. Gaps</a>
+    <a href="/firms/{{ firm.id }}/documents" class="{{ 'on' if t == 'documents' }}">4. Documents</a>
+    <a href="/firms/{{ firm.id }}/deadlines" class="{{ 'on' if t == 'deadlines' }}">Deadlines</a>
+    {% if health_enabled %}
+    <span class="sep"></span>
+    <a href="/firms/{{ firm.id }}/health" class="{{ 'on' if t == 'health' }}">Cyber Health Check</a>
+    {% endif %}
+  </nav>
+  {% endif %}
+  <main>
+    {% if firm and firm.is_demo %}
+    <div class="banner">Demo workspace. All names and data are fictional sample data.</div>
+    {% endif %}
+    {% block content %}{% endblock %}
+  </main>
+  <footer>
+    <div class="warnline">{{ disclaimer }}</div>
+    <div>Wolftech AI Labs, Ahmedabad. Your data stays on this machine. No analytics, no third-party scripts.</div>
+  </footer>
+</div>
+</body>
+</html>

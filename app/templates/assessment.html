@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% set tab = 'assessment' if product == 'dpdp' else 'health' %}
+{% block title %}{{ title }}{% endblock %}
+{% block content %}
+<div class="kicker">{{ 'Step 2 of 4' if product == 'dpdp' else 'Cyber Health Check' }}</div>
+<h1>{{ title }}</h1>
+<p class="lead">{{ intro }}</p>
+<form method="post" action="{{ action }}">
+  {% for section, rules in sections.items() %}
+  <h2>{{ section }}</h2>
+  <div class="card">
+    {% for r in rules %}
+    {% set a = answers.get(r.id, '') %}
+    <fieldset class="q" id="{{ r.anchor }}">
+      <legend>{{ r.question }}</legend>
+      {% if r.help %}<span class="hint">{{ r.help }}</span>{% endif %}
+      <span class="cite">{{ r.id }} - {{ r.citation }}{% if r.kind == 'guidance' %} (CERT-In baseline guidance){% endif %} - <a href="{{ rules_url }}#{{ r.anchor }}">rule</a></span>
+      <div class="choices">
+        <label><input type="radio" name="{{ r.id }}" value="yes" {{ 'checked' if a == 'yes' }}> Yes</label>
+        <label><input type="radio" name="{{ r.id }}" value="partial" {{ 'checked' if a == 'partial' }}> Partly</label>
+        <label><input type="radio" name="{{ r.id }}" value="no" {{ 'checked' if a == 'no' }}> No</label>
+        {% if r.allow_na %}<label><input type="radio" name="{{ r.id }}" value="na" {{ 'checked' if a == 'na' }}> Not applicable</label>{% endif %}
+      </div>
+    </fieldset>
+    {% endfor %}
+  </div>
+  {% endfor %}
+  <div class="actions"><button class="btn" type="submit">Save and see results</button></div>
+</form>
+{% endblock %}

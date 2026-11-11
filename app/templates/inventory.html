@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% set tab = 'inventory' %}
+{% block title %}Data inventory{% endblock %}
+{% block content %}
+<div class="kicker">Step 1 of 4</div>
+<h1>Data inventory</h1>
+<p class="lead">What personal data does the firm hold, and why? We have filled in typical answers for a law firm. Change anything that is not right.</p>
+<form method="post" action="/firms/{{ firm.id }}/inventory">
+  {% for item in items %}
+  {% set c = categories[item.category] %}
+  {% set k = item.category %}
+  {% set fresh = item.id is none %}
+  <div class="card">
+    <h3>{{ c.label }}</h3>
+    <p class="muted small">{{ c.hint }}</p>
+    <fieldset class="field">
+      <legend>Do you hold this?</legend>
+      <div class="choices">
+        <label><input type="radio" name="{{ k }}__held" value="yes" {{ 'checked' if item.held or fresh }}> Yes</label>
+        <label><input type="radio" name="{{ k }}__held" value="no" {{ 'checked' if not item.held and not fresh }}> No</label>
+      </div>
+    </fieldset>
+    <div class="field"><label for="{{ k }}__data_items">What personal data is in it?</label>
+      <textarea id="{{ k }}__data_items" name="{{ k }}__data_items" maxlength="500">{{ item.data_items or (c.data_items if fresh else '') }}</textarea></div>
+    <div class="field"><label for="{{ k }}__purpose">Why do you keep it?</label>
+      <input type="text" id="{{ k }}__purpose" name="{{ k }}__purpose" value="{{ item.purpose or (c.purpose if fresh else '') }}" maxlength="500"></div>
+    <div class="field"><label for="{{ k }}__basis">What ground do you rely on? <span class="hint">Not sure? Leave it as "Not decided yet" and ask your lawyer.</span></label>
+      <select id="{{ k }}__basis" name="{{ k }}__basis">
+        {% for value, label in bases.items() %}<option value="{{ value }}" {{ 'selected' if item.basis == value }}>{{ label }}</option>{% endfor %}
+      </select></div>
+    <div class="grid two">
+      <div class="field"><label for="{{ k }}__storage">Where is it stored?</label>
+        <input type="text" id="{{ k }}__storage" name="{{ k }}__storage" value="{{ item.storage }}" maxlength="300" placeholder="e.g. cloud drive, office server, laptop"></div>
+      <div class="field"><label for="{{ k }}__retention">How long do you keep it today?</label>
+        <input type="text" id="{{ k }}__retention" name="{{ k }}__retention" value="{{ item.retention }}" maxlength="300" placeholder="e.g. 8 years after matter closes"></div>
+    </div>
+    <div class="field"><label for="{{ k }}__shared_with">Who is it shared with? <span class="hint">Vendors or others. Leave empty if no one.</span></label>
+      <input type="text" id="{{ k }}__shared_with" name="{{ k }}__shared_with" value="{{ item.shared_with }}" maxlength="300"></div>
+  </div>
+  {% endfor %}
+  <div class="actions"><button class="btn" type="submit">Save and continue to assessment</button></div>
+</form>
+{% endblock %}

@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% set tab = 'gaps' %}
+{% block title %}Gap list{% endblock %}
+{% block content %}
+<div class="kicker">Step 3 of 4</div>
+<h1>Readiness and gaps</h1>
+<div class="card accent">
+  {% if result.score is not none %}
+  <div class="score"><span class="num">{{ result.score }}</span><span class="of">/ 100 - {{ result.band }}</span></div>
+  <progress value="{{ result.score }}" max="100">{{ result.score }}%</progress>
+  <p class="muted">{{ result.met }} of {{ result.applicable }} applicable rules met.
+    {% if not result.complete %}{{ result.applicable - result.answered }} questions not answered yet (counted as gaps).{% endif %}
+    {% if deadline %}Main duties apply from {{ deadline.date.strftime('%d %B %Y') }} ({{ deadline.label }}).{% endif %}</p>
+  {% else %}
+  <p class="muted">No applicable rules answered yet.</p>
+  {% endif %}
+  <p class="small muted">The score is Wolftech's readiness estimate, weighted by the penalty tiers in the Act's Schedule. It is not a legal finding of compliance.</p>
+  <div class="actions"><a class="btn ghost sm" href="/firms/{{ firm.id }}/assessment">Change answers</a>
+    <a class="btn sm" href="/firms/{{ firm.id }}/documents">Go to documents</a></div>
+</div>
+
+<h2>Prioritised gap list ({{ result.gaps|length }})</h2>
+{% if not result.gaps %}
+<div class="card"><p>No gaps found from your answers. Ask your lawyer to review your documents and evidence.</p></div>
+{% else %}
+<div class="card">
+  {% for g in result.gaps %}
+  <div class="gap">
+    <div class="head">
+      <h3>{{ loop.index }}. {{ g.rule.title }}</h3>
+      <span class="pill {{ g.priority|lower }}">{{ g.priority }} priority</span>
+      <span class="pill">{{ g.status }}</span>
+    </div>
+    <p>{{ g.rule.requirement }}</p>
+    <p class="cite"><a href="/rules/dpdp#{{ g.rule.anchor }}">{{ g.rule.id }}</a> - {{ g.rule.citation }} -
+      <a href="{{ g.rule.source.url }}" rel="noopener noreferrer">{{ g.rule.source.title }}</a></p>
+    <div class="fix"><b>Fix:</b> {{ g.rule.fix }}<br><span class="muted small">Evidence to keep: {{ g.rule.evidence }}</span></div>
+  </div>
+  {% endfor %}
+</div>
+{% endif %}
+{% endblock %}

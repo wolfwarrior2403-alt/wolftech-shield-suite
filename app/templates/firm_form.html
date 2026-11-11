@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block title %}Firm profile{% endblock %}
+{% block content %}
+<div class="kicker">{{ 'New workspace' if is_new else 'Firm profile' }}</div>
+<h1>Tell us about the firm</h1>
+<p class="lead">Profile: Law firm. This sets which rules apply and fills in your documents.</p>
+{% if error %}<div class="error">{{ error }}</div>{% endif %}
+<form method="post" action="{{ '/firms' if is_new else '/firms/' ~ firm.id ~ '/profile' }}" class="card">
+  <div class="field"><label for="name">Firm name</label>
+    <input type="text" id="name" name="name" value="{{ firm.name }}" maxlength="120" required></div>
+  <div class="grid two">
+    <div class="field"><label for="city">City</label>
+      <input type="text" id="city" name="city" value="{{ firm.city }}" maxlength="80"></div>
+    <div class="field"><label for="staff_count">Number of people <span class="hint">Partners, associates and staff</span></label>
+      <input type="number" id="staff_count" name="staff_count" value="{{ firm.staff_count or '' }}" min="0"></div>
+  </div>
+  <h2>Privacy contact</h2>
+  <p class="muted small">The person who answers questions about personal data. The law requires this contact to be published (Act s.8(9); Rules r.9).</p>
+  <div class="field"><label for="contact_name">Name or role</label>
+    <input type="text" id="contact_name" name="contact_name" value="{{ firm.contact_name }}" maxlength="120"></div>
+  <div class="grid two">
+    <div class="field"><label for="contact_email">Email</label>
+      <input type="email" id="contact_email" name="contact_email" value="{{ firm.contact_email }}" maxlength="160"></div>
+    <div class="field"><label for="contact_phone">Phone</label>
+      <input type="text" id="contact_phone" name="contact_phone" value="{{ firm.contact_phone }}" maxlength="40"></div>
+  </div>
+  <div class="field"><label for="website">Website <span class="hint">Leave empty if the firm has none</span></label>
+    <input type="text" id="website" name="website" value="{{ firm.website }}" maxlength="160"></div>
+  <h2>Two quick questions</h2>
+  <fieldset class="field">
+    <legend>Do outside vendors handle personal data for you?</legend>
+    <span class="hint">Cloud storage, email hosting, payroll, IT support, e-signature.</span>
+    <div class="choices">
+      <label><input type="radio" name="uses_processors" value="yes" {{ 'checked' if firm.uses_processors }}> Yes</label>
+      <label><input type="radio" name="uses_processors" value="no" {{ 'checked' if not firm.uses_processors }}> No</label>
+    </div>
+  </fieldset>
+  <fieldset class="field">
+    <legend>Do you hold personal data about anyone under 18?</legend>
+    <span class="hint">For example family, guardianship or juvenile matters.</span>
+    <div class="choices">
+      <label><input type="radio" name="handles_children" value="yes" {{ 'checked' if firm.handles_children }}> Yes</label>
+      <label><input type="radio" name="handles_children" value="no" {{ 'checked' if not firm.handles_children }}> No</label>
+    </div>
+  </fieldset>
+  <div class="actions"><button class="btn" type="submit">{{ 'Continue to data inventory' if is_new else 'Save profile' }}</button></div>
+</form>
+{% endblock %}

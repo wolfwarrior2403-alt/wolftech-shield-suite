@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}{{ title }}{% endblock %}
+{% block content %}
+<div class="kicker">Rule library</div>
+<h1>{{ title }}</h1>
+<p class="lead">{{ intro }}</p>
+<p class="small muted">Full rule book with status of every rule: <code>{{ rulebook }}</code> in the project folder.</p>
+<div class="card">
+  {% for r in rules %}
+  <div class="gap" id="{{ r.anchor }}">
+    <div class="head">
+      <h3>{{ r.id }} - {{ r.title }}</h3>
+      <span class="pill ok">Verified</span>
+      {% if r.kind == 'guidance' %}<span class="pill">Guidance</span>{% else %}<span class="pill">Mandatory</span>{% endif %}
+    </div>
+    <p>{{ r.requirement }}</p>
+    <p class="cite">{{ r.citation }} - <a href="{{ r.source.url }}" rel="noopener noreferrer">{{ r.source.title }}</a></p>
+    <p class="small muted">Evidence: {{ r.evidence }}{% if r.applies_if == 'handles_children' %} Applies only if you hold data about under-18s.{% elif r.applies_if == 'uses_processors' %} Applies only if vendors handle data for you.{% endif %}</p>
+  </div>
+  {% endfor %}
+</div>
+<h2>Not verified - left out of scoring</h2>
+<div class="card">
+  <ul>{% for id, text in unverified %}<li><b>{{ id }}</b> <span class="pill warn">Unverified</span> {{ text }}</li>{% endfor %}</ul>
+</div>
+{% endblock %}

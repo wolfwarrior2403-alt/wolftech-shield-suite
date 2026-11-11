@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% set tab = tab_name|default('documents') %}
+{% block title %}{{ doc.title }}{% endblock %}
+{% block content %}
+<div class="actions">
+  <a class="btn ghost sm" href="{{ back_url }}">Back</a>
+  <a class="btn sm" href="{{ pdf_url }}">Download PDF</a>
+</div>
+<p></p>
+<article class="doc">
+  <div class="kicker">Wolftech AI Labs</div>
+  <h1>{{ doc.title }}</h1>
+  <p class="muted small">{{ doc.firm_name }} | Generated {{ doc.generated_on.strftime('%d %B %Y') }}</p>
+  <p class="warnline">{{ doc.disclaimer }}</p>
+  {% for block in doc.blocks %}
+    {% if block[0] == 'h2' %}<h2>{{ block[1] }}</h2>
+    {% elif block[0] == 'p' %}<p>{{ block[1] }}</p>
+    {% elif block[0] == 'note' %}<p class="docnote">{{ block[1] }}</p>
+    {% elif block[0] == 'ul' %}<ul>{% for i in block[1] %}<li>{{ i }}</li>{% endfor %}</ul>
+    {% elif block[0] == 'ol' %}<ol>{% for i in block[1] %}<li>{{ i }}</li>{% endfor %}</ol>
+    {% elif block[0] == 'table' %}
+    <div class="tablewrap"><table>
+      <thead><tr>{% for h in block[1] %}<th>{{ h }}</th>{% endfor %}</tr></thead>
+      <tbody>{% for row in block[2] %}<tr>{% for c in row %}<td>{{ c }}</td>{% endfor %}</tr>{% endfor %}</tbody>
+    </table></div>
+    {% endif %}
+  {% endfor %}
+  {% set sources = doc.sources() %}
+  {% if sources %}
+  <h2>Sources</h2>
+  <div class="tablewrap"><table>
+    <thead><tr><th>Rule ID</th><th>Citation</th><th>Link</th></tr></thead>
+    <tbody>{% for id, cite, url in sources %}<tr><td>{{ id }}</td><td>{{ cite }}</td><td><a href="{{ url }}" rel="noopener noreferrer">Source</a></td></tr>{% endfor %}</tbody>
+  </table></div>
+  {% endif %}
+</article>
+{% endblock %}

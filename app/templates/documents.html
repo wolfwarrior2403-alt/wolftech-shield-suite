@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% set tab = 'documents' %}
+{% block title %}Documents{% endblock %}
+{% block content %}
+<div class="kicker">Step 4 of 4</div>
+<h1>Draft documents</h1>
+<p class="lead">Built from your profile and data inventory. Each one cites its rules. Text in [square brackets] is for you or your lawyer to complete.</p>
+<p class="warnline">{{ disclaimer }}</p>
+<div class="grid two">
+  {% for slug, title, summary in documents %}
+  <div class="card">
+    <h3>{{ title }}</h3>
+    <p class="muted small">{{ summary }}</p>
+    <div class="actions">
+      <a class="btn ghost sm" href="/firms/{{ firm.id }}/documents/{{ slug }}">Preview</a>
+      <a class="btn sm" href="/firms/{{ firm.id }}/documents/{{ slug }}.pdf">Download PDF</a>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% endblock %}

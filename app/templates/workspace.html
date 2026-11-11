@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% set tab = 'overview' %}
+{% block title %}{{ firm.name }}{% endblock %}
+{% block content %}
+<div class="kicker">Workspace</div>
+<h1>{{ firm.name }}</h1>
+<p class="lead">Law firm{% if firm.city %}, {{ firm.city }}{% endif %}{% if firm.staff_count %} - {{ firm.staff_count }} people{% endif %}. <a href="/firms/{{ firm.id }}/profile">Edit profile</a></p>
+
+<div class="grid two">
+  <div class="card accent">
+    <div class="kicker">DPDP readiness</div>
+    {% if dpdp.answered %}
+    <div class="score"><span class="num">{{ dpdp.score }}</span><span class="of">/ 100 - {{ dpdp.band }}</span></div>
+    <progress value="{{ dpdp.score }}" max="100">{{ dpdp.score }}%</progress>
+    <p class="muted small">{{ dpdp.met }} of {{ dpdp.applicable }} rules met. {{ dpdp.gaps|length }} gaps{% if not dpdp.complete %}, {{ dpdp.applicable - dpdp.answered }} not answered{% endif %}.</p>
+    <div class="actions"><a class="btn" href="/firms/{{ firm.id }}/gaps">See gap list</a>
+      <a class="btn ghost" href="/firms/{{ firm.id }}/documents">Documents</a></div>
+    {% else %}
+    <p class="muted">Not started. Two steps: data inventory, then the assessment.</p>
+    <div class="actions"><a class="btn" href="/firms/{{ firm.id }}/inventory">Start</a></div>
+    {% endif %}
+  </div>
+  {% if health_enabled %}
+  <div class="card accent">
+    <div class="kicker">Cyber health</div>
+    {% if health and health.answered %}
+    <div class="score"><span class="num">{{ health.score }}</span><span class="of">/ 100 - {{ health.band }}</span></div>
+    <progress value="{{ health.score }}" max="100">{{ health.score }}%</progress>
+    <p class="muted small">{{ health.met }} of {{ health.applicable }} checks met. {{ health.gaps|length }} fixes suggested.</p>
+    <div class="actions"><a class="btn" href="/firms/{{ firm.id }}/health/report">See report</a></div>
+    {% else %}
+    <p class="muted">Not started. A 10-minute questionnaire and an optional check of your own domain.</p>
+    <div class="actions"><a class="btn" href="/firms/{{ firm.id }}/health">Start</a></div>
+    {% endif %}
+  </div>
+  {% endif %}
+</div>
+
+<h2>Legal dates</h2>
+<div class="card">
+  <ul class="timeline">
+    {% for d in deadlines %}
+    <li class="{{ d.status }}">
+      <div class="date">{{ d.date.strftime('%d %B %Y') }} <span class="pill {{ 'ok' if d.status == 'past' else 'high' }}">{{ d.label }}</span></div>
+      <div>{{ d.title }}</div>
+    </li>
+    {% endfor %}
+  </ul>
+  <a href="/firms/{{ firm.id }}/deadlines">Deadline details and sources</a>
+</div>
+
+<h2>Your steps</h2>
+<div class="card">
+  <ol>
+    <li><a href="/firms/{{ firm.id }}/inventory">Data inventory</a> - what personal data you hold and why.</li>
+    <li><a href="/firms/{{ firm.id }}/assessment">Gap assessment</a> - one question per rule.</li>
+    <li><a href="/firms/{{ firm.id }}/gaps">Gap list</a> - what to fix first, with the rule and source.</li>
+    <li><a href="/firms/{{ firm.id }}/documents">Documents</a> - six drafts as PDF for your lawyer.</li>
+  </ol>
+</div>
+{% endblock %}
