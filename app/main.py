@@ -5,7 +5,7 @@ from contextlib import asynccontextmanager
 from typing import Annotated
 
 from fastapi import Depends, FastAPI, Request
-from fastapi.responses import RedirectResponse
+from fastapi.responses import RedirectResponse, Response
 from fastapi.staticfiles import StaticFiles
 from sqlmodel import Session, select
 
@@ -15,7 +15,9 @@ from .compliance.routes import load_firm, router as compliance_router
 from .health import service as health_service
 from .health.routes import router as health_router
 from .models import Firm
+from .pdf import render_pdf
 from .seed import reset_demo, seed_demo
+from .summary import build_summary, summary_doc
 from .web import BASE, render
 
 SECURITY_HEADERS = {
@@ -69,6 +71,18 @@ def create_app(db_url: str | None = None, seed: bool = True) -> FastAPI:
             deadlines=service.deadlines(),
             inventory_done=sum(1 for i in inventory if i.id is not None),
         )
+
+    @app.get("/firms/{firm_id}/summary")
+    def summary(request: Request, firm_id: int, session: Db):
+        firm = load_firm(session, firm_id)
+        return render(request, "summary.html", firm=firm, s=build_summary(session, firm))
+
+    @app.get("/firms/{firm_id}/summary.pdf")
+    def summary_pdf(firm_id: int, session: Db):
+        firm = load_firm(session, firm_id)
+        pdf = render_pdf(summary_doc(build_summary(session, firm)), "Shield Suite summary")
+        return Response(pdf, media_type="application/pdf",
+                        headers={"Content-Disposition": 'inline; filename="wolftech-summary.pdf"'})
 
     @app.post("/demo/reset")
     def demo_reset(session: Db):

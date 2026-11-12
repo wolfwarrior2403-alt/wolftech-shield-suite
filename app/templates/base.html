@@ -22,6 +22,7 @@
   {% set t = tab|default('') %}
   <nav class="tabs" aria-label="Workspace">
     <a href="/firms/{{ firm.id }}" class="{{ 'on' if t == 'overview' }}">{{ firm.name }}</a>
+    <a href="/firms/{{ firm.id }}/summary" class="{{ 'on' if t == 'summary' }}">Summary</a>
     <span class="sep"></span>
     <a href="/firms/{{ firm.id }}/inventory" class="{{ 'on' if t == 'inventory' }}">1. Data inventory</a>
     <a href="/firms/{{ firm.id }}/assessment" class="{{ 'on' if t == 'assessment' }}">2. Assessment</a>

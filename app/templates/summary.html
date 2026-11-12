@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% set tab = 'summary' %}
+{% block title %}Summary - {{ firm.name }}{% endblock %}
+{% block content %}
+<div class="kicker">One-page summary</div>
+<h1>{{ firm.name }}</h1>
+<p class="lead">Two scores, five things to fix first, and the next legal date. Two minutes to read.</p>
+
+<div class="grid two">
+  <div class="card accent">
+    <div class="kicker">DPDP readiness</div>
+    {% if s.dpdp.answered %}
+    <div class="score"><span class="num">{{ s.dpdp.score }}</span><span class="of">/ 100 - {{ s.dpdp.band }}</span></div>
+    <progress value="{{ s.dpdp.score }}" max="100">{{ s.dpdp.score }}%</progress>
+    <p class="muted small">{{ s.dpdp.met }} of {{ s.dpdp.applicable }} rules met. {{ s.dpdp.gaps|length }} gaps.</p>
+    {% else %}<p class="muted">Not started.</p>{% endif %}
+  </div>
+  <div class="card accent">
+    <div class="kicker">Cyber health</div>
+    {% if s.health.answered %}
+    <div class="score"><span class="num">{{ s.health.score }}</span><span class="of">/ 100 - grade {{ s.grade }}</span></div>
+    <progress value="{{ s.health.score }}" max="100">{{ s.health.score }}%</progress>
+    <p class="muted small">{{ s.health.met }} of {{ s.health.applicable }} checks met. {{ s.health.gaps|length }} fixes.</p>
+    {% else %}<p class="muted">Not started.</p>{% endif %}
+  </div>
+</div>
+
+{% if s.deadline %}
+<div class="card">
+  <div class="kicker">Next legal date</div>
+  <p><b>{{ s.deadline.date.strftime('%d %B %Y') }}</b> <span class="pill high">{{ s.deadline.label }}</span></p>
+  <p class="muted small">{{ s.deadline.title }}.</p>
+</div>
+{% endif %}
+
+<h2>Fix these five first</h2>
+<div class="card">
+  {% for a in s.actions %}
+  <div class="gap">
+    <div class="head">
+      <h3>{{ loop.index }}. {{ a.title }}</h3>
+      <span class="pill {{ 'high' if a.product == 'DPDP' else 'low' }}">{{ a.product }}</span>
+      <span class="pill">{{ a.tag }}</span>
+    </div>
+    <div class="fix"><b>Do this:</b> {{ a.fix }}</div>
+    <p class="cite">{{ a.rule_id }} - {{ a.citation }}{% if a.stake %} - At stake: {{ a.stake }}{% endif %}</p>
+  </div>
+  {% else %}
+  <p class="muted">No open gaps from the answers given. Keep evidence for each rule.</p>
+  {% endfor %}
+</div>
+
+<div class="actions">
+  <a class="btn" href="/firms/{{ firm.id }}/summary.pdf">Download 1-page PDF</a>
+  <a class="btn ghost" href="/firms/{{ firm.id }}/gaps">Full gap list</a>
+  <a class="btn ghost" href="/firms/{{ firm.id }}/health/report">Full cyber report</a>
+</div>
+<p class="muted small note-top">Scores are Wolftech's readiness estimate, weighted by the penalty tiers in the DPDP Act's Schedule. "At stake" is the maximum penalty in the Schedule for that kind of breach, not a prediction.</p>
+{% endblock %}

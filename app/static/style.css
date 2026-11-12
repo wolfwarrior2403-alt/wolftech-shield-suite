@@ -122,3 +122,5 @@ footer { border-top: 1px solid var(--line); padding: 20px 0 40px; color: var(--m
 footer .warnline { margin-bottom: 6px; }
 .tabs { scrollbar-width: none; }
 .tabs::-webkit-scrollbar { display: none; }
+
+.note-top { margin-top: 14px; }
