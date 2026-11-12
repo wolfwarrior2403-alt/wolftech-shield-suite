@@ -9,6 +9,7 @@ from sqlmodel import Session
 
 from ..db import get_session
 from ..models import Firm
+from ..profiles import DEFAULT_PROFILE, PROFILES, categories as profile_categories
 from ..pdf import render_pdf
 from ..rules.base import DISCLAIMER
 from ..rules.dpdp import DEADLINE_NOTE, DPDP_RULES, PENALTIES, UNVERIFIED
@@ -31,6 +32,8 @@ def load_firm(session: Session, firm_id: int) -> Firm:
 def _firm_from_form(form, firm: Firm | None = None) -> Firm:
     firm = firm or Firm(name="")
     firm.name = str(form.get("name", "")).strip()[:120]
+    chosen = str(form.get("profile", firm.profile or DEFAULT_PROFILE))
+    firm.profile = chosen if chosen in PROFILES else DEFAULT_PROFILE
     firm.city = str(form.get("city", "")).strip()[:80]
     try:
         firm.staff_count = max(0, min(100000, int(form.get("staff_count") or 0)))
@@ -86,7 +89,7 @@ async def update_firm(request: Request, firm_id: int, session: Db):
 def inventory(request: Request, firm_id: int, session: Db):
     firm = load_firm(session, firm_id)
     return render(request, "inventory.html", firm=firm, items=service.get_inventory(session, firm_id),
-                  categories=service.CATEGORIES, bases=service.BASES)
+                  categories=profile_categories(firm.profile), bases=service.BASES)
 
 
 @router.post("/firms/{firm_id}/inventory")

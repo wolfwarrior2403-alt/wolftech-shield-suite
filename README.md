@@ -1,11 +1,17 @@
 # Wolftech Shield Suite
 
-By Wolftech AI Labs, Ahmedabad. Two products for small Indian firms in one local app.
+By Wolftech AI Labs, Ahmedabad. Three tools for small Indian firms (law firms, CA
+firms, clinics and other businesses) in one local app.
 
 - **Compliance Kit** - get ready for the Digital Personal Data Protection Act 2023
   and the DPDP Rules 2025. First profile: Law firm.
 - **Cyber Health Check** - a scored security check mapped to the CERT-In
   Directions of 28 April 2022 and CERT-In's 15 baseline controls for MSMEs.
+- **Privacy Shield** - mask client names, emails, phones, PAN, Aadhaar and GSTIN
+  in a CSV before it goes to any AI tool, and restore real values with a key
+  that never leaves the machine.
+- **One-page summary** - for the owner: two scores, five fixes, the next legal
+  date. Web page and a one-page PDF.
 
 > Draft for review by a qualified lawyer. Not legal advice.
 
@@ -85,6 +91,22 @@ private address is not contacted.
 SPF and DMARC results count towards the email rule (CERT-In control NES.4). TLS
 and header results are shown as good practice and are **not scored**, because no
 primary-source CERT-In rule was found that requires them.
+
+## Privacy Shield from the command line
+
+```bash
+.venv/Scripts/python -m app.shield.mask clients.csv
+# -> clients.masked.csv (safe for AI tools) and clients.key.csv (keep private)
+.venv/Scripts/python -m app.shield.mask --unmask ai_answer.txt clients.key.csv
+```
+
+## Deploy the public demo on Vercel
+
+`index.py` exposes the FastAPI app. Import the GitHub repository in Vercel; no
+settings are needed. On Vercel the app switches to public-demo mode: a banner
+asks visitors not to enter real data, Privacy Shield masks only the built-in
+sample, and the database lives in `/tmp` (re-created with the demo workspace
+whenever a new instance starts). Real client work runs on the firm's own machine.
 
 ## MCP server
 

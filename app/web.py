@@ -1,16 +1,28 @@
 """Template helper shared by all routes."""
 from __future__ import annotations
 
+import os
 from pathlib import Path
 
 from fastapi import Request
 from fastapi.templating import Jinja2Templates
 
+from . import profiles
 from .rules.base import DISCLAIMER
 
 BASE = Path(__file__).parent
 templates = Jinja2Templates(directory=str(BASE / "templates"))
 templates.env.globals["health_enabled"] = True
+templates.env.globals["profile_label"] = profiles.label
+templates.env.globals["profiles"] = profiles.PROFILES
+templates.env.globals["zip"] = zip
+
+
+def _public_demo() -> bool:
+    return bool(os.environ.get("WOLFTECH_PUBLIC_DEMO") or os.environ.get("VERCEL"))
+
+
+templates.env.globals["public_demo_site"] = _public_demo
 
 
 def render(request: Request, name: str, status_code: int = 200, **context):

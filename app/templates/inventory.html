@@ -4,7 +4,7 @@
 {% block content %}
 <div class="kicker">Step 1 of 4</div>
 <h1>Data inventory</h1>
-<p class="lead">What personal data does the firm hold, and why? We have filled in typical answers for a law firm. Change anything that is not right.</p>
+<p class="lead">What personal data does the firm hold, and why? We have filled in typical answers for a {{ profile_label(firm.profile)|lower }}. Change anything that is not right.</p>
 <form method="post" action="/firms/{{ firm.id }}/inventory">
   {% for item in items %}
   {% set c = categories[item.category] %}

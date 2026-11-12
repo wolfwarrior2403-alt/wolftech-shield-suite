@@ -6,6 +6,8 @@ No statutory retention period or regulator address is invented here.
 """
 from __future__ import annotations
 
+from contextvars import ContextVar
+
 from dataclasses import dataclass, field
 from datetime import date
 
@@ -57,7 +59,13 @@ def _held(inventory: list[InventoryItem]) -> list[InventoryItem]:
     return [i for i in inventory if i.held]
 
 
+_PROFILE: ContextVar[str | None] = ContextVar("wolftech_profile", default=None)
+
+
 def _label(item: InventoryItem) -> str:
+    if item.category == "client_files":
+        from ..profiles import profile
+        return profile(_PROFILE.get())["client_files"]["label"]
     return CATEGORIES[item.category]["label"]
 
 
@@ -76,7 +84,11 @@ def build_document(slug: str, firm: Firm, inventory: list[InventoryItem]) -> Doc
     }
     if slug not in builders:
         raise KeyError(slug)
-    doc = builders[slug](firm, inventory)
+    token = _PROFILE.set(firm.profile)
+    try:
+        doc = builders[slug](firm, inventory)
+    finally:
+        _PROFILE.reset(token)
     doc.firm_name = firm.name
     return doc
 

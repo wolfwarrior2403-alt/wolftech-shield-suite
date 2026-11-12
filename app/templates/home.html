@@ -19,7 +19,7 @@
   {% for f in firms %}
   <div class="card">
     <h3>{{ f.name }} {% if f.is_demo %}<span class="pill">Demo</span>{% endif %}</h3>
-    <p class="muted small">Law firm{% if f.city %}, {{ f.city }}{% endif %}{% if f.staff_count %} - {{ f.staff_count }} people{% endif %}</p>
+    <p class="muted small">{{ profile_label(f.profile) }}{% if f.city %}, {{ f.city }}{% endif %}{% if f.staff_count %} - {{ f.staff_count }} people{% endif %}</p>
     <div class="actions">
       <a class="btn" href="/firms/{{ f.id }}">Open</a>
       {% if f.is_demo %}
@@ -40,6 +40,10 @@
   <div class="card">
     <h3>Compliance Kit</h3>
     <p class="muted">Data inventory, gap assessment against the DPDP Act 2023 and DPDP Rules 2025, six draft documents as PDF, and a deadline tracker.</p>
+  </div>
+  <div class="card">
+    <h3>Privacy Shield</h3>
+    <p class="muted">Mask client names, emails, phones, PAN and Aadhaar before data goes into any AI tool. Restore real values on your own machine. <a href="/privacy-shield">Try it on sample data</a>.</p>
   </div>
   {% if health_enabled %}
   <div class="card">

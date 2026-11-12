@@ -4,7 +4,7 @@
 {% block content %}
 <div class="kicker">Workspace</div>
 <h1>{{ firm.name }}</h1>
-<p class="lead">Law firm{% if firm.city %}, {{ firm.city }}{% endif %}{% if firm.staff_count %} - {{ firm.staff_count }} people{% endif %}. <a href="/firms/{{ firm.id }}/profile">Edit profile</a></p>
+<p class="lead">{{ profile_label(firm.profile) }}{% if firm.city %}, {{ firm.city }}{% endif %}{% if firm.staff_count %} - {{ firm.staff_count }} people{% endif %}. <a href="/firms/{{ firm.id }}/profile">Edit profile</a></p>
 
 <div class="grid two">
   <div class="card accent">

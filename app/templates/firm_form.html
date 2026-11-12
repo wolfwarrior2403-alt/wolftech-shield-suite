@@ -3,15 +3,19 @@
 {% block content %}
 <div class="kicker">{{ 'New workspace' if is_new else 'Firm profile' }}</div>
 <h1>Tell us about the firm</h1>
-<p class="lead">Profile: Law firm. This sets which rules apply and fills in your documents.</p>
+<p class="lead">This sets which rules apply and fills in your documents. Works for law firms, CA firms, clinics and other small businesses.</p>
 {% if error %}<div class="error">{{ error }}</div>{% endif %}
 <form method="post" action="{{ '/firms' if is_new else '/firms/' ~ firm.id ~ '/profile' }}" class="card">
+  <div class="field"><label for="profile">Type of firm</label>
+    <select id="profile" name="profile">
+      {% for key, p in profiles.items() %}<option value="{{ key }}" {{ 'selected' if firm.profile == key }}>{{ p.label }}</option>{% endfor %}
+    </select></div>
   <div class="field"><label for="name">Firm name</label>
     <input type="text" id="name" name="name" value="{{ firm.name }}" maxlength="120" required></div>
   <div class="grid two">
     <div class="field"><label for="city">City</label>
       <input type="text" id="city" name="city" value="{{ firm.city }}" maxlength="80"></div>
-    <div class="field"><label for="staff_count">Number of people <span class="hint">Partners, associates and staff</span></label>
+    <div class="field"><label for="staff_count">Number of people <span class="hint">Owners, professionals and staff</span></label>
       <input type="number" id="staff_count" name="staff_count" value="{{ firm.staff_count or '' }}" min="0"></div>
   </div>
   <h2>Privacy contact</h2>
@@ -37,7 +41,7 @@
   </fieldset>
   <fieldset class="field">
     <legend>Do you hold personal data about anyone under 18?</legend>
-    <span class="hint">For example family, guardianship or juvenile matters.</span>
+    <span class="hint">For example minor clients, patients, students or customers.</span>
     <div class="choices">
       <label><input type="radio" name="handles_children" value="yes" {{ 'checked' if firm.handles_children }}> Yes</label>
       <label><input type="radio" name="handles_children" value="no" {{ 'checked' if not firm.handles_children }}> No</label>

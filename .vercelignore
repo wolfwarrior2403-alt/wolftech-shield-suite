@@ -1,0 +1,11 @@
+.venv
+tests
+docs
+scripts
+website
+data
+*.pdf
+*.bundle
+mcp_server.py
+render.yaml
+requirements-dev.txt

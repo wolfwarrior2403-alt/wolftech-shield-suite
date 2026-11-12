@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% block title %}Privacy Shield{% endblock %}
+{% block content %}
+<div class="kicker">Privacy Shield</div>
+<h1>Use AI without giving it your clients' data</h1>
+<p class="lead">Before a client list goes into Claude, Gemini or ChatGPT, replace every name, email, phone number, PAN and Aadhaar with a consistent fake. Build and test with the fake copy. Put the real values back only on your own machine.</p>
+
+{% if error %}<div class="error">{{ error }}</div>{% endif %}
+
+<h2>See it on sample data</h2>
+<div class="card">
+  <p class="muted small">Four fictional client rows. The same person always gets the same fake, so counts, joins and duplicates still work.</p>
+  <div class="table-wrap"><table class="data">
+    <thead><tr><th></th>{% for h in sample.headers %}<th>{{ h }}</th>{% endfor %}</tr></thead>
+    <tbody>
+      {% for before, after in zip(sample.preview_before, sample.preview_after) %}
+      <tr class="before"><th>Real</th>{% for c in before %}<td>{{ c }}</td>{% endfor %}</tr>
+      <tr class="after"><th>Masked</th>{% for c in after %}<td>{{ c }}</td>{% endfor %}</tr>
+      {% endfor %}
+    </tbody>
+  </table></div>
+  <p class="muted small">Columns found: {% for h, k in sample.columns.items() %}<span class="pill {{ 'high' if k else '' }}">{{ h }}: {{ k or 'text scanned' }}</span> {% endfor %}</p>
+  <form method="post" action="/privacy-shield/mask" class="actions">
+    <input type="hidden" name="use_sample" value="yes">
+    <button class="btn" type="submit">Download the masked sample</button>
+  </form>
+</div>
+
+<h2>How it works</h2>
+<div class="grid three">
+  <div class="card"><h3>1. Mask</h3><p class="muted small">Upload a CSV export. You get <b>masked.csv</b> (safe for AI tools) and <b>KEY-KEEP-PRIVATE.csv</b>.</p></div>
+  <div class="card"><h3>2. Work with AI</h3><p class="muted small">Give only the masked file to Claude Code, Gemini or ChatGPT to build, test or analyse.</p></div>
+  <div class="card"><h3>3. Restore</h3><p class="muted small">Put real names back into the AI's answer with the key, on your own machine.</p></div>
+</div>
+
+<h2>Mask your own file</h2>
+<div class="card">
+  {% if public_demo %}
+  <p>This is the public demo, so it only masks the sample above. Your clients' data should never be uploaded to a website, including this one.</p>
+  <p class="muted small">Run the Shield Suite on your own computer (one command) to mask real files. Nothing is stored and nothing leaves the machine.</p>
+  {% else %}
+  <form method="post" action="/privacy-shield/mask" enctype="multipart/form-data">
+    <div class="field"><label for="file">CSV file <span class="hint">Up to {{ max_mb }} MB. Export from Excel, Google Sheets or your CRM as CSV.</span></label>
+      <input type="file" id="file" name="file" accept=".csv,text/csv"></div>
+    <div class="actions"><button class="btn" type="submit">Mask and download</button></div>
+  </form>
+  <h3 class="mt">Restore real values</h3>
+  <form method="post" action="/privacy-shield/unmask" enctype="multipart/form-data">
+    <div class="grid two">
+      <div class="field"><label for="ufile">Masked file or AI answer</label><input type="file" id="ufile" name="file"></div>
+      <div class="field"><label for="ukey">Key file</label><input type="file" id="ukey" name="key" accept=".csv"></div>
+    </div>
+    <div class="actions"><button class="btn ghost" type="submit">Restore and download</button></div>
+  </form>
+  <p class="muted small">Nothing you upload is stored. The file is masked in memory and sent straight back to you.</p>
+  {% endif %}
+</div>
+
+<div class="card">
+  <h3>Why this matters</h3>
+  <p class="muted small">Under the DPDP Act the firm stays responsible for client data it shares with AI vendors (Act s.8(1), s.8(2)), and must protect it with reasonable safeguards (Act s.8(5); Rules r.6). Masking before sharing means the vendor never holds the real data at all.</p>
+  <p class="muted small">Masking catches names, emails, phone numbers, PAN, Aadhaar, GSTIN, dates of birth and addresses by column name and pattern. Check the masked file before sharing: unusual free-text fields may need a manual look.</p>
+</div>
+{% endblock %}

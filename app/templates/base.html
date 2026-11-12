@@ -12,6 +12,7 @@
     <a class="brand" href="/"><span class="mark"></span>Wolftech AI Labs <small>Shield Suite</small></a>
     <nav>
       <a href="/">Workspaces</a>
+      <a href="/privacy-shield">Privacy Shield</a>
       <a href="/rules/dpdp">DPDP rules</a>
       {% if health_enabled %}<a href="/rules/certin">CERT-In rules</a>{% endif %}
     </nav>
@@ -36,6 +37,9 @@
   </nav>
   {% endif %}
   <main>
+    {% if public_demo_site() %}
+    <div class="banner">Public demo. Please use the sample firm or made-up details only, never real client data. To use the Shield Suite for your firm, it runs on your own computer: contact Wolftech AI Labs.</div>
+    {% endif %}
     {% if firm and firm.is_demo %}
     <div class="banner">Demo workspace. All names and data are fictional sample data.</div>
     {% endif %}

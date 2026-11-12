@@ -124,3 +124,12 @@ footer .warnline { margin-bottom: 6px; }
 .tabs::-webkit-scrollbar { display: none; }
 
 .note-top { margin-top: 14px; }
+.table-wrap { overflow-x: auto; margin: 8px 0 12px; }
+table.data { border-collapse: collapse; width: 100%; font-size: 13px; }
+table.data th, table.data td { border: 1px solid var(--line); padding: 6px 8px; text-align: left; vertical-align: top; white-space: nowrap; }
+table.data thead th { background: var(--panel-2); color: var(--muted); font-weight: 600; }
+table.data tr.before td { color: var(--muted); }
+table.data tr.after td { color: var(--ok); }
+table.data tr.after { border-bottom: 2px solid var(--line); }
+table.data tbody th { color: var(--muted); font-weight: 600; font-size: 12px; }
+.mt { margin-top: 22px; }

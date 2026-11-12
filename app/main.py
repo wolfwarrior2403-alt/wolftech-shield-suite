@@ -14,6 +14,7 @@ from .compliance import service
 from .compliance.routes import load_firm, router as compliance_router
 from .health import service as health_service
 from .health.routes import router as health_router
+from .shield.routes import router as shield_router
 from .models import Firm
 from .pdf import render_pdf
 from .seed import reset_demo, seed_demo
@@ -47,6 +48,7 @@ def create_app(db_url: str | None = None, seed: bool = True) -> FastAPI:
     app.mount("/static", StaticFiles(directory=str(BASE / "static")), name="static")
     app.include_router(compliance_router)
     app.include_router(health_router)
+    app.include_router(shield_router)
 
     @app.middleware("http")
     async def add_security_headers(request: Request, call_next):

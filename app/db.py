@@ -13,7 +13,9 @@ _engine = None
 
 
 def default_url() -> str:
-    path = Path(os.environ.get("WOLFTECH_DB", "data/wolftech.db"))
+    # Vercel functions can only write to /tmp. The demo workspace is re-created on start.
+    fallback = "/tmp/wolftech.db" if os.environ.get("VERCEL") else "data/wolftech.db"
+    path = Path(os.environ.get("WOLFTECH_DB", fallback))
     path.parent.mkdir(parents=True, exist_ok=True)
     return f"sqlite:///{path.as_posix()}"
 
