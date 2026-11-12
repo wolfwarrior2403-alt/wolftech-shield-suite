@@ -47,7 +47,7 @@
   </main>
   <footer>
     <div class="warnline">{{ disclaimer }}</div>
-    <div>Wolftech AI Labs, Ahmedabad. Your data stays on this machine. No analytics, no third-party scripts.</div>
+    <div>Wolftech AI Labs, Ahmedabad. {% if public_demo_site() %}Public demo with sample data only.{% else %}Your data stays on this machine.{% endif %} No analytics, no third-party scripts.</div>
   </footer>
 </div>
 </body>

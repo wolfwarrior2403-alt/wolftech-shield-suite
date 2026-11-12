@@ -133,3 +133,11 @@ table.data tr.after td { color: var(--ok); }
 table.data tr.after { border-bottom: 2px solid var(--line); }
 table.data tbody th { color: var(--muted); font-weight: 600; font-size: 12px; }
 .mt { margin-top: 22px; }
+.hero { padding: 18px 0 8px; }
+.hero h1 { font-size: 38px; line-height: 1.12; max-width: 22ch; }
+@media (max-width: 600px) { .hero h1 { font-size: 28px; } }
+.hero .lead { font-size: 18px; }
+.deadline-line { margin-top: 18px; color: var(--muted); font-size: 14.5px; }
+.big { font-size: 28px; font-weight: 800; color: var(--red); line-height: 1; margin-bottom: 8px; }
+ol.steps { margin: 0; padding-left: 22px; }
+ol.steps li { margin-bottom: 10px; }

@@ -1,55 +1,100 @@
 {% extends "base.html" %}
-{% block title %}Workspaces{% endblock %}
+{% block title %}Data protection made simple for small firms{% endblock %}
 {% block content %}
-<div class="kicker">Security-first compliance for small Indian firms</div>
-<h1>Get ready for the DPDP Act. Know your cyber health.</h1>
-<p class="lead">Answer plain-English questions. See your gaps, each linked to the exact rule. Download draft documents for your lawyer to review.</p>
 
-{% if deadline %}
-<div class="card accent">
-  <div class="kicker">Next legal date</div>
-  <h3>{{ deadline.date.strftime('%d %B %Y') }} - {{ deadline.label }}</h3>
-  <p class="muted">{{ deadline.title }}. {{ deadline.meaning }}</p>
-  <p class="cite">Source: {{ deadline.citation }}</p>
+<section class="hero">
+  <div class="kicker">For law firms, CA firms, clinics and small businesses in India</div>
+  <h1>Find out in 15 minutes if your firm is safe under India's new data law.</h1>
+  <p class="lead">Answer simple Yes / No questions. Get a score, the 5 things to fix first, and ready-made documents. No jargon, no consultant needed to start.</p>
+  <div class="actions">
+    {% set demo = firms|selectattr('is_demo')|first %}
+    {% if demo %}<a class="btn" href="/firms/{{ demo.id }}/summary">See a sample report</a>{% endif %}
+    <a class="btn ghost" href="/firms/new">Check my firm</a>
+  </div>
+  {% if deadline %}
+  <p class="deadline-line"><span class="pill high">{{ deadline.label }}</span> The main duties of the DPDP Act apply from <b>{{ deadline.date.strftime('%d %B %Y') }}</b>. Penalties go up to Rs 250 crore.</p>
+  {% endif %}
+</section>
+
+<h2>Why you need this</h2>
+<div class="grid three">
+  <div class="card">
+    <div class="big">1</div>
+    <h3>A new law applies to you</h3>
+    <p class="muted small">If you keep names, phone numbers, PAN, Aadhaar or files of clients, patients or staff, the Digital Personal Data Protection Act applies to your firm. Most small firms have not started.</p>
+  </div>
+  <div class="card">
+    <div class="big">2</div>
+    <h3>Cyber attacks hit small firms</h3>
+    <p class="muted small">A fake email from your domain or a leaked client list can cost you clients and trust. CERT-In expects incidents to be reported within 6 hours.</p>
+  </div>
+  <div class="card">
+    <div class="big">3</div>
+    <h3>You now use AI</h3>
+    <p class="muted small">Pasting client lists into ChatGPT, Gemini or Claude sends that data to another company. You stay responsible for it under the law.</p>
+  </div>
 </div>
-{% endif %}
 
-<h2>Workspaces</h2>
+<h2>What you get</h2>
+<div class="grid three">
+  <div class="card accent">
+    <div class="kicker">DPDP readiness</div>
+    <h3>A score and a fix list</h3>
+    <p class="muted small">27 simple questions. You get a score out of 100, your gaps ranked by risk, and six draft documents (privacy notice, consent form, breach plan and more) for your lawyer to check.</p>
+  </div>
+  <div class="card accent">
+    <div class="kicker">Cyber health</div>
+    <h3>A security grade</h3>
+    <p class="muted small">24 questions based on CERT-In rules, plus a safe check of your website and email settings. You get a grade from A to E and the easiest fixes first.</p>
+  </div>
+  <div class="card accent">
+    <div class="kicker">Privacy Shield</div>
+    <h3>Use AI safely</h3>
+    <p class="muted small">Turn "Rajesh Patel, 98765 43210" into "Person_0001, 90000 00001" before data goes to any AI tool. Put the real names back on your own computer.</p>
+  </div>
+</div>
+
+<h2>How it works</h2>
+<div class="card">
+  <ol class="steps">
+    <li><b>Tell us about your firm.</b> Type of firm, size, and what records you keep. 5 minutes.</li>
+    <li><b>Answer Yes, Partly or No.</b> One plain question per legal rule. 10 minutes.</li>
+    <li><b>Get your one-page summary.</b> Two scores, the 5 things to fix first, the deadline, and a PDF you can share with your partners.</li>
+  </ol>
+  <div class="actions">
+    {% if demo %}<a class="btn" href="/firms/{{ demo.id }}/summary">See a sample report</a>{% endif %}
+    <a class="btn ghost" href="/privacy-shield">Try Privacy Shield</a>
+  </div>
+</div>
+
+<h2>Why firms trust it</h2>
+<div class="grid three">
+  <div class="card"><h3>No AI guessing</h3><p class="muted small">The law is written as fixed rules. Same answers, same score, every time. Every gap links to the Government's own text.</p></div>
+  <div class="card"><h3>Your data stays with you</h3><p class="muted small">For real use it runs on your own computer, so client data never leaves your office. No tracking, no ads.</p></div>
+  <div class="card"><h3>Honest about limits</h3><p class="muted small">A readiness check, not legal advice. Every document is a draft for a qualified lawyer.</p></div>
+</div>
+
+<h2 id="workspaces">Workspaces</h2>
 <div class="grid two">
   {% for f in firms %}
   <div class="card">
-    <h3>{{ f.name }} {% if f.is_demo %}<span class="pill">Demo</span>{% endif %}</h3>
+    <h3>{{ f.name }} {% if f.is_demo %}<span class="pill">Sample</span>{% endif %}</h3>
     <p class="muted small">{{ profile_label(f.profile) }}{% if f.city %}, {{ f.city }}{% endif %}{% if f.staff_count %} - {{ f.staff_count }} people{% endif %}</p>
     <div class="actions">
-      <a class="btn" href="/firms/{{ f.id }}">Open</a>
+      <a class="btn sm" href="/firms/{{ f.id }}/summary">Summary</a>
+      <a class="btn ghost sm" href="/firms/{{ f.id }}">Open workspace</a>
       {% if f.is_demo %}
-      <form method="post" action="/demo/reset"><button class="btn ghost" type="submit">Reset demo</button></form>
+      <form method="post" action="/demo/reset"><button class="btn ghost sm" type="submit">Reset sample</button></form>
       {% endif %}
     </div>
   </div>
   {% endfor %}
   <div class="card">
     <h3>Your firm</h3>
-    <p class="muted small">Start a new workspace. Takes about 15 minutes.</p>
-    <div class="actions"><a class="btn ghost" href="/firms/new">Start a new workspace</a></div>
+    <p class="muted small">Start a new check. Takes about 15 minutes.</p>
+    <div class="actions"><a class="btn sm" href="/firms/new">Check my firm</a></div>
   </div>
 </div>
 
-<h2>What is inside</h2>
-<div class="grid two">
-  <div class="card">
-    <h3>Compliance Kit</h3>
-    <p class="muted">Data inventory, gap assessment against the DPDP Act 2023 and DPDP Rules 2025, six draft documents as PDF, and a deadline tracker.</p>
-  </div>
-  <div class="card">
-    <h3>Privacy Shield</h3>
-    <p class="muted">Mask client names, emails, phones, PAN and Aadhaar before data goes into any AI tool. Restore real values on your own machine. <a href="/privacy-shield">Try it on sample data</a>.</p>
-  </div>
-  {% if health_enabled %}
-  <div class="card">
-    <h3>Cyber Health Check</h3>
-    <p class="muted">A scored security check mapped to CERT-In directions and guidance, with passive checks of your own domain and fixes ranked easiest first.</p>
-  </div>
-  {% endif %}
-</div>
+<p class="muted small note-top">Built by Wolftech AI Labs, Ahmedabad.</p>
 {% endblock %}
